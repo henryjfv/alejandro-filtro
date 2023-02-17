@@ -18,15 +18,8 @@ const routes = [
     ],
   },
   {
-    path: "/simple-menu",
-    component: SimpleMenu,
-    children: [
-      {
-        path: "page-1",
-        name: "simple-menu-page-1",
-        component: Page1,
-      }
-    ],
+    path: "/page-2",
+    component: Page2,
   },
   {
     path: "/top-menu",
