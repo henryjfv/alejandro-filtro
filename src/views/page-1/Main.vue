@@ -46,6 +46,14 @@ import Tabulator from "tabulator-tables";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import { createClient } from "@supabase/supabase-js";
+
+const urlBase = "https://fmjqtucwfrgiwojzzbxg.supabase.co";
+const anonPublicKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanF0dWN3ZnJnaXdvanp6YnhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTk3NjM2MDIsImV4cCI6MTk3NTMzOTYwMn0.dNR-TeLq5x25Tm2sCUbymrYnCJr9kw_n0DL2Dw7Hwa0";
+
+// Supabase client
+const supabase = createClient(urlBase, anonPublicKey);
 
 const tableRef = ref();
 let tabulator = "";
@@ -68,7 +76,7 @@ const columns = [
     title: "FECHA DE CERTIFICACION",
     minWidth: 200,
     responsive: 0,
-    field: "FECHA",
+    field: "FECHA DE CERTIFICACION",
     vertAlign: "middle",
     print: false,
     download: false,
@@ -130,51 +138,42 @@ const initTabulator = (data) => {
     paginationSizeSelector: [10, 20, 30, 40],
     placeholder: "No se encontraron registros",
     data: data,
-    columns: columns,
+    columns,
   });
 };
 
 const onClear = async () => {
-  filter.value = ''
+  filter.value = "";
   await getUser();
 };
 
 // Filter function
 const onFilter = async () => {
   if (filter.value) {
-    const result = dataForTable.filter((o) => o["CEDULA"] == filter.value);
-    if (result.length > 0) {
-      initTabulator(result);
-    } else {
-      initTabulator([]);
-      alert("Usuario no encontrado");
-    }
+    searchByCedula(filter.value);
   } else {
     alert("El campo buscar no debe estar vacío");
   }
 };
 
-const getUser = async () => {
-  await axios({
-    method: "get",
-    url: `https://fmjqtucwfrgiwojzzbxg.supabase.co/rest/v1/Usuarios?select=*`,
-    headers: {
-      apikey:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanF0dWN3ZnJnaXdvanp6YnhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTk3NjM2MDIsImV4cCI6MTk3NTMzOTYwMn0.dNR-TeLq5x25Tm2sCUbymrYnCJr9kw_n0DL2Dw7Hwa0",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanF0dWN3ZnJnaXdvanp6YnhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTk3NjM2MDIsImV4cCI6MTk3NTMzOTYwMn0.dNR-TeLq5x25Tm2sCUbymrYnCJr9kw_n0DL2Dw7Hwa0",
-    },
-  })
-    .then(function (response) {
-      dataForTable = response.data;
-      initTabulator(dataForTable);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+const searchByCedula = async (numberDocument) => {
+  let { data: Usuarios, error } = await supabase
+    .from("Usuarios")
+    .select()
+    .eq("CEDULA", numberDocument);
+  Usuarios.length > 0
+    ? initTabulator(Usuarios)
+    : alert("Usuario no encontrado");
+  error && console.error(error);
 };
 
-onMounted(() => {
+const getUser = async () => {
+  let { data: Usuarios, error } = await supabase.from("Usuarios").select("*");
+  Usuarios.length > 0 && initTabulator(Usuarios);
+  error && console.error(error);
+};
+
+onMounted(async () => {
   getUser();
 });
 </script>
