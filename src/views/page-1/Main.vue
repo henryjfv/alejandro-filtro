@@ -1,5 +1,5 @@
 <template>
-  <div class="hero container max-w-screen-lg mx-auto pb-10">
+  <div class="hero container mx-auto pb-10">
     <div class="flex justify-center items-center">
       <img class="m-5" src="@/assets/images/logo.jpeg" width="400" alt="" />
       <img class="m-5" src="@/assets/images/icontect.jpeg" width="100" alt="" />
@@ -48,9 +48,9 @@ import { useRouter } from "vue-router";
 import axios from "axios";
 import { createClient } from "@supabase/supabase-js";
 
-const urlBase = "https://fmjqtucwfrgiwojzzbxg.supabase.co";
+const urlBase = "https://dbnxdptkmnsobcofysnz.supabase.co";
 const anonPublicKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtanF0dWN3ZnJnaXdvanp6YnhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTk3NjM2MDIsImV4cCI6MTk3NTMzOTYwMn0.dNR-TeLq5x25Tm2sCUbymrYnCJr9kw_n0DL2Dw7Hwa0";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRibnhkcHRrbW5zb2Jjb2Z5c256Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTA2NTMyODcsImV4cCI6MjAwNjIyOTI4N30.L5opeFNjV0KFjjIyzgrvnjifL5ulBTJwHCxSz5o8ZQc";
 
 // Supabase client
 const supabase = createClient(urlBase, anonPublicKey);
