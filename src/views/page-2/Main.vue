@@ -107,7 +107,7 @@ function validarColumnas(list) {
   // Si hay columnas faltantes, mostramos una alerta
   if (columnasFaltantes.length > 0) {
     const columnasFaltantesTexto = columnasFaltantes.join(", ");
-    errorsList = `La lista no contiene las siguientes columnas: ${columnasFaltantesTexto}`;
+    errorsList += `La lista no contiene las siguientes columnas: ${columnasFaltantesTexto} \n`;
     alert(
       `La lista no contiene las siguientes columnas: ${columnasFaltantesTexto}`
     );
@@ -116,7 +116,33 @@ function validarColumnas(list) {
   }
 }
 
+function validarValoresTexto(objeto) {
+  return Object.values(objeto).every((valor) => typeof valor === "string");
+}
+
+const validarFormato = (listaObjetos) => {
+  let columnaInvalida = null;
+
+  for (let i = 0; i < listaObjetos.length; i++) {
+    if (!validarValoresTexto(listaObjetos[i])) {
+      columnaInvalida = Object.keys(listaObjetos[i]).find(
+        (key) => typeof listaObjetos[i][key] !== "string"
+      );
+      break;
+    }
+  }
+
+  if (columnaInvalida !== null) {
+    console.log(`La columna "${columnaInvalida}" tiene un formato inválido.`);
+    errorsList += `La columna "${columnaInvalida}" tiene un formato inválido. \n`;
+    alert(`La columna "${columnaInvalida}" tiene un formato inválido.`);
+  } else {
+    errorsList = "";
+  }
+};
+
 const handleFileChange = (event) => {
+  errorsList = "";
   isLoading.value = true;
   const file = event.target.files[0];
   const reader = new FileReader();
@@ -133,6 +159,8 @@ const handleFileChange = (event) => {
       ...new Set(dataExcel.flatMap((objeto) => Object.keys(objeto))),
     ];
     validarColumnas(columnasUnicas);
+    // Validar todos los objetos de la lista
+    validarFormato(dataExcel);
     excelData.value = dataExcel.map((data) => ({
       CONTRATANTE: data.CONTRATANTE ?? "",
       CURSO: data.CURSO ?? "",
